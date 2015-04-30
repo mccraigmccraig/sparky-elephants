@@ -9,4 +9,8 @@
   <root level="info">
     <appender-ref ref="STDOUT" />
   </root>
+
+  <logger name="kafka" level="warn"/>
+  <logger name="org.apache.zookeeper" level="warn"/>
+  <logger name="org.I0Itec.zkclient" level="warn"/>
 </configuration>
