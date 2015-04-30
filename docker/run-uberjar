@@ -1,0 +1,5 @@
+#!/bin/dash
+
+. /.profile
+
+exec java -Xms${MAX_MEMORY} -Xmx${MAX_MEMORY} -cp /uberjar.jar sparky_elephants.server 2>&1 | logger -t "${SYSLOG_TAG}"

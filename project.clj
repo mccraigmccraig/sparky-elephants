@@ -46,7 +46,8 @@
   :plugins [[lein-cljsbuild "1.0.4"]
             [lein-environ "1.0.0"]
             [lein-ring "0.9.1"]
-            [lein-asset-minifier "0.2.2"]]
+            [lein-asset-minifier "0.2.2"]
+            [com.palletops/uberimage "0.4.1"]]
 
   :ring {:handler sparky-elephants.handler/app
          :uberwar-name "sparky-elephants.war"}
@@ -62,6 +63,12 @@
   :minify-assets
   {:assets
     {"resources/public/css/site.min.css" "resources/public/css/site.css"}}
+
+  :uberimage {:cmd ["/bin/dash" "/run-uberjar"]
+              :instructions ["RUN apt-get update && apt-get -y dist-upgrade"]
+              :files {".profile" "docker/.profile"
+                      "run-uberjar" "docker/run-uberjar"}
+              :tag "mccraigmccraig/sparky-elephants"}
 
   :cljsbuild {:builds {:app {:source-paths ["src/cljs"]
                              :compiler {:output-to     "resources/public/js/app.js"
