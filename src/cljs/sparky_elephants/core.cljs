@@ -43,13 +43,14 @@
 
 (defn set-user
   [user-id]
-  (let [user-id (not-empty user-id)]
+  (let [user-id (not-empty user-id)
+        host (-> js/window.location .-host)]
     (go
       (reset! user-id-value user-id)
       (swap! mailbox-chan (fn [old-chan] (when old-chan (close! old-chan)) nil))
       (reset! message-history-value nil)
       (when user-id
-        (when-let [ch (<! (open-ws (str "ws://localhost:10000/mailbox/" user-id "?client-uuid=" client-uuid)))]
+        (when-let [ch (<! (open-ws (str "ws://" host "/mailbox/" user-id "?client-uuid=" client-uuid)))]
           (reset! mailbox-chan ch)
           (log-channel ch message-history-value))))))
 
@@ -66,7 +67,8 @@
   [:div
    [:div.row
     [:div.col-md-2 [:label "Message"]]
-    [:div.col-md-5 [:input {:field :text :id :msg}]]]])
+    [:div.col-md-5 [:input {:field :text
+                            :id :msg}]]]])
 
 (defn message-form
   []
