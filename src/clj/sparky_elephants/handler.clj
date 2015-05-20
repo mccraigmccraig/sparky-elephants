@@ -52,12 +52,28 @@
     (s/connect socket socket)
     non-websocket-request))
 
-(def kafka-consumer-config {"zookeeper.connect" "localhost:2181"
+(def zookeeper-connect
+  (let [ev (env :zookeeper-connect)]
+    (if ev
+      (do
+        (log/info (str "zookeeper-connect from environment: " ev))
+        ev)
+      "localhost:2181")))
+
+(def kafka-consumer-config {"zookeeper.connect" zookeeper-connect
                             "group.id" "clj-kafka.consumer" ;; default consumer group : client can override
                             "auto.offset.reset" "smallest"
                             "auto.commit.enable" "true"})
 
-(def kafka-producer-config {"metadata.broker.list" "localhost:9092"
+(def metadata-broker-list
+  (let [ev (env :metadata-broker-list)]
+    (if ev
+      (do
+        (log/info (str "metadata-broker-list from environment: " ev))
+        ev)
+      "localhost:9092")))
+
+(def kafka-producer-config {"metadata.broker.list" metadata-broker-list
                             "serializer.class" "kafka.serializer.DefaultEncoder"
                             "partitioner.class" "kafka.producer.DefaultPartitioner"})
 
@@ -78,9 +94,9 @@
            (map last)))
 
 (defn send-message
-  [message]
+  [author message]
   (doseq [user-id (extract-destinations message)]
-    (kprod/send-message (get-kafka-producer) (kprod/message (str "mailbox-" user-id) (.getBytes message)))))
+    (kprod/send-message (get-kafka-producer) (kprod/message (str "mailbox-" user-id) (.getBytes (str author ": " message))))))
 
 (defn mailbox-handler
   [req]
@@ -105,7 +121,7 @@
               (s/consume (fn [m]
                            (let [v (transit-json-> m)]
                              (log/info (str "RX: " v))
-                             (send-message v)))
+                             (send-message user-id v)))
                          socket)
 
               (log/info (str "CONNECTED MAILBOX: " user-id)))
