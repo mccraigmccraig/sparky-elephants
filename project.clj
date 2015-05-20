@@ -68,7 +68,7 @@
               :instructions ["RUN apt-get update && apt-get -y dist-upgrade"]
               :files {".profile" "docker/.profile"
                       "run-uberjar" "docker/run-uberjar"}
-              :tag "mccraigmccraig/sparky-elephants"}
+              :tag "trampoline/sparky-elephants"}
 
   :cljsbuild {:builds {:app {:source-paths ["src/cljs"]
                              :compiler {:output-to     "resources/public/js/app.js"
