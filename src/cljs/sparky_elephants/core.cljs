@@ -109,6 +109,15 @@
    [message-form]
    [message-history user-id-value message-history-value]])
 
+(defn about-page []
+  [:div [:h2 "about"]])
+
+(defn choose-page []
+  (let [p (session/get :current-page)]
+    (if p
+      [p]
+      [home-page])))
+
 ;; -------------------------
 ;; Routes
 (secretary/set-config! :prefix "#")
@@ -117,7 +126,7 @@
   (session/put! :current-page #'home-page))
 
 (secretary/defroute "/about" []
-  (session/put! :current-page #'home-page))
+  (session/put! :current-page #'about-page))
 
 ;; -------------------------
 ;; History
@@ -133,7 +142,7 @@
 ;; -------------------------
 ;; Initialize app
 (defn mount-root []
-  (reagent/render [home-page] (.getElementById js/document "app")))
+  (reagent/render [choose-page] (.getElementById js/document "app")))
 
 (defn init! []
   (hook-browser-navigation!)
