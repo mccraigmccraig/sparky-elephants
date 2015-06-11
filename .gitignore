@@ -11,3 +11,4 @@ pom.xml.asc
 /out
 /.repl
 /.figwheel_server.log
+/figwheel_server.log
