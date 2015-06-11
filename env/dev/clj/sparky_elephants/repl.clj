@@ -30,10 +30,18 @@
                                             {:dirs ["src/clj"]
                                              :additional-ns ['sparky-elephants.handler]}))
 
+(defn parse-port
+  [p]
+  (cond
+    (nil? p) nil
+    (integer? p) p
+    (string? p) (Integer/parseInt p)
+    :else (throw (ex-info (str "can't parse port: " p)) {:port p})))
+
 (defn start-server
   "used for starting the server in development mode from REPL"
   [& [port]]
-  (let [port (if port (Integer/parseInt port) 10000)]
+  (let [port (parse-port port)]
     (sparky-elephants.server/start-or-restart-server port {:handler (reload-handler)})
     (println (str "You can view the site at http://localhost:" port))))
 
